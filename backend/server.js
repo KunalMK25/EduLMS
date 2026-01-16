@@ -20,15 +20,15 @@ app.use(express.json());
 // ✅ CORS FIX (Netlify + Localhost)
 app.use(
   cors({
-    origin: [
-      "https://edulms1.netlify.app", // Netlify frontend
-      "http://localhost:5173",       // Local dev (Vite)
-    ],
+    origin: true, // 🔥 allow ALL origins
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   })
 );
+
+app.options("*", cors());
+
 
 // ✅ Allow preflight requests
 app.options("*", cors());
