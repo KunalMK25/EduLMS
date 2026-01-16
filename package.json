@@ -1,0 +1,16 @@
+{
+  "name": "project-2",
+  "version": "1.0.0",
+  "description": "A simple and user-friendly Learning Management System (LMS) built with the MERN stack (MongoDB, Express, React, Node.js). Designed for college projects, this application supports Students, Instructors, and Admins.",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"cd backend && npm start\" \"cd frontend && npm run dev\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
