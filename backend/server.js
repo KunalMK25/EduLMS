@@ -11,15 +11,18 @@ const app = express();
 
 app.use(express.json());
 
+import cors from "cors";
+
 app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://edulms1.netlify.app"
+      "https://edulms1.vercel.app",
     ],
-    credentials: true
+    credentials: true,
   })
-)
+);
+
 
 const uploadsDir = path.join(__dirname, "uploads");
 
