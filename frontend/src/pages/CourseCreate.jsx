@@ -21,7 +21,15 @@ const CourseCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/api/courses", formData);
+      await api.post(
+        "/api/courses",
+        formData,
+        {
+           headers: {
+           Authorization: `Bearer ${localStorage.getItem("token")}`}
+        }
+    );
+
       navigate("/dashboard");
     } catch {
       alert("Failed to create course");
