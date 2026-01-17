@@ -1,9 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api";
 
 const CourseCreate = () => {
   const [formData, setFormData] = useState({
@@ -28,11 +26,7 @@ const CourseCreate = () => {
     setUploading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/upload`, data, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const res = await api.post("/api/upload", data);
       setFormData((prev) => ({ ...prev, thumbnail: res.data }));
     } catch {
       alert("File upload failed");
@@ -44,11 +38,7 @@ const CourseCreate = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${API_URL}/api/courses`, formData, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      await api.post("/api/courses", formData);
       navigate("/dashboard");
     } catch {
       alert("Failed to create course");

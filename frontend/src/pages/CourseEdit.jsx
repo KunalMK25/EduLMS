@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api";
 
 const CourseEdit = () => {
   const { id } = useParams();
@@ -24,7 +22,7 @@ const CourseEdit = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/courses/${id}`);
+        const { data } = await api.get(`/api/courses/${id}`);
         setFormData({
           title: data.title,
           description: data.description,
@@ -37,6 +35,7 @@ const CourseEdit = () => {
         navigate("/dashboard");
       }
     };
+
     fetchCourse();
   }, [id, navigate]);
 
@@ -50,11 +49,7 @@ const CourseEdit = () => {
     setUploading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/api/upload`, data, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const res = await api.post("/api/upload", data);
       setFormData((prev) => ({ ...prev, thumbnail: res.data }));
     } catch {
       alert("File upload failed");
@@ -66,11 +61,7 @@ const CourseEdit = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_URL}/api/courses/${id}`, formData, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      await api.put(`/api/courses/${id}`, formData);
       navigate("/dashboard");
     } catch {
       alert("Failed to update course");
@@ -134,7 +125,7 @@ const CourseEdit = () => {
           {formData.thumbnail && (
             <div className="mb-2">
               <img
-                src={`${API_URL}${formData.thumbnail}`}
+                src={formData.thumbnail}
                 alt="Current Thumbnail"
                 className="w-32 h-20 object-cover rounded"
               />

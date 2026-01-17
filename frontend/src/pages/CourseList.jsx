@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api";
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);
@@ -11,7 +9,7 @@ const CourseList = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/courses`);
+        const { data } = await api.get("/api/courses");
         setCourses(data);
       } finally {
         setLoading(false);
@@ -33,7 +31,7 @@ const CourseList = () => {
           >
             {course.thumbnail && (
               <img
-                src={`${API_URL}${course.thumbnail}`}
+                src={course.thumbnail}
                 alt={course.title}
                 className="w-full h-48 object-cover"
               />

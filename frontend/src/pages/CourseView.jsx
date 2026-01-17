@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api";
 
 const CourseView = () => {
   const { id } = useParams();
@@ -39,7 +37,7 @@ const CourseView = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const { data } = await axios.get(`${API_URL}/api/courses/${id}`);
+        const { data } = await api.get(`/api/courses/${id}`);
         setCourse(data);
         if (data.lessons?.length > 0) setActiveLesson(data.lessons[0]);
       } finally {
@@ -50,11 +48,8 @@ const CourseView = () => {
     const checkEnrollment = async () => {
       if (user?.role === "student") {
         try {
-          const { data } = await axios.get(
-            `${API_URL}/api/courses/${id}/enrollment`,
-            {
-              headers: { Authorization: `Bearer ${user.token}` },
-            }
+          const { data } = await api.get(
+            `/api/courses/${id}/enrollment`
           );
           setEnrolled(data.enrolled);
         } catch {}
@@ -67,11 +62,7 @@ const CourseView = () => {
 
   const handleEnroll = async () => {
     try {
-      await axios.post(
-        `${API_URL}/api/courses/${id}/enroll`,
-        {},
-        { headers: { Authorization: `Bearer ${user.token}` } }
-      );
+      await api.post(`/api/courses/${id}/enroll`);
       setEnrolled(true);
     } catch {
       alert("Enrollment failed");
@@ -84,9 +75,7 @@ const CourseView = () => {
     data.append("file", file);
     setUploading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/upload`, data, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
+      const res = await api.post("/api/upload", data);
       setLessonForm((p) => ({ ...p, content: res.data }));
     } finally {
       setUploading(false);
@@ -96,10 +85,9 @@ const CourseView = () => {
   const handleAddLesson = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        `${API_URL}/api/courses/${id}/lessons`,
-        lessonForm,
-        { headers: { Authorization: `Bearer ${user.token}` } }
+      const { data } = await api.post(
+        `/api/courses/${id}/lessons`,
+        lessonForm
       );
       setCourse(data);
       setShowAddLesson(false);
@@ -118,10 +106,9 @@ const CourseView = () => {
   const handleAddQuiz = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        `${API_URL}/api/courses/${id}/quizzes`,
-        quizForm,
-        { headers: { Authorization: `Bearer ${user.token}` } }
+      const { data } = await api.post(
+        `/api/courses/${id}/quizzes`,
+        quizForm
       );
       setCourse(data);
     } catch {
@@ -132,10 +119,9 @@ const CourseView = () => {
   const handleSubmitQuiz = async () => {
     try {
       const answers = activeQuiz.questions.map((_, i) => quizAnswers[i]);
-      const { data } = await axios.post(
-        `${API_URL}/api/courses/${id}/quizzes/${activeQuiz._id}/submit`,
-        { answers },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+      const { data } = await api.post(
+        `/api/courses/${id}/quizzes/${activeQuiz._id}/submit`,
+        { answers }
       );
       alert(`Quiz Submitted! Score: ${Math.round(data.score)}%`);
       setActiveQuiz(null);
@@ -204,13 +190,13 @@ const CourseView = () => {
                   <video
                     controls
                     className="w-full"
-                    src={`${API_URL}${activeLesson.content}`}
+                    src={activeLesson.content}
                   />
                 )}
                 {activeLesson.type === "pdf" && (
                   <iframe
                     className="w-full h-96"
-                    src={`${API_URL}${activeLesson.content}`}
+                    src={activeLesson.content}
                   />
                 )}
                 {activeLesson.type === "text" && (

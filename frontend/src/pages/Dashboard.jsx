@@ -1,9 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -14,23 +12,12 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const config = {
-          headers: { Authorization: `Bearer ${token}` },
-        };
-
         let response;
         if (user?.role === "instructor") {
-          response = await axios.get(
-            `${API_URL}/api/courses/my-created-courses`,
-            config
-          );
+          response = await api.get("/api/courses/my-created-courses");
           setCourses(Array.isArray(response.data) ? response.data : []);
         } else if (user?.role === "student") {
-          response = await axios.get(
-            `${API_URL}/api/courses/my-enrolled-courses`,
-            config
-          );
+          response = await api.get("/api/courses/my-enrolled-courses");
           setCourses(Array.isArray(response.data) ? response.data : []);
         }
       } catch {
@@ -46,11 +33,8 @@ const Dashboard = () => {
   const handleDeleteCourse = async (id) => {
     if (!window.confirm("Are you sure you want to delete this course?")) return;
     try {
-      const token = localStorage.getItem("token");
-      await axios.delete(`${API_URL}/api/courses/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCourses(courses.filter((course) => course._id !== id));
+      await api.delete(`/api/courses/${id}`);
+      setCourses((prev) => prev.filter((c) => c._id !== id));
     } catch {
       alert("Failed to delete course");
     }
@@ -85,13 +69,15 @@ const Dashboard = () => {
                 >
                   {course.thumbnail && (
                     <img
-                      src={`${API_URL}${course.thumbnail}`}
+                      src={course.thumbnail}
                       alt={course.title}
                       className="w-full h-48 object-cover"
                     />
                   )}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2">{course.title}</h3>
+                    <h3 className="text-xl font-bold mb-2">
+                      {course.title}
+                    </h3>
                     <p className="text-gray-600 mb-4">
                       {course.description?.substring(0, 100)}...
                     </p>

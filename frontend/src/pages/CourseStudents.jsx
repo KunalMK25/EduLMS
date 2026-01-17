@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from "../api";
 
 const CourseStudents = () => {
   const { id } = useParams();
@@ -14,15 +12,7 @@ const CourseStudents = () => {
   useEffect(() => {
     const fetchStudents = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const { data } = await axios.get(
-          `${API_URL}/api/courses/${id}/students`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const { data } = await api.get(`/api/courses/${id}/students`);
         setStudents(data);
       } finally {
         setLoading(false);
@@ -33,7 +23,11 @@ const CourseStudents = () => {
   }, [id, user]);
 
   if (loading)
-    return <div className="p-8 text-center text-gray-500">Loading students...</div>;
+    return (
+      <div className="p-8 text-center text-gray-500">
+        Loading students...
+      </div>
+    );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
