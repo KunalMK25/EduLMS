@@ -11,10 +11,18 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
   e.preventDefault();
+
   try {
     const res = await api.post("/api/auth/login", formData);
 
+    // 🧠 SAVE TOKEN
     localStorage.setItem("token", res.data.token);
+
+    // 🧠 SAVE USER (optional but recommended)
+    localStorage.setItem("user", JSON.stringify(res.data));
+
+    // 🧠 TELL AUTH CONTEXT
+    login(res.data); // only if you have useAuth()
 
     navigate("/dashboard");
   } catch (err) {
