@@ -9,6 +9,7 @@ dotenv.config();
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 
 app.use(
@@ -16,36 +17,40 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://edulms1.vercel.app",
+      "https://edu-lms-six.vercel.app"
     ],
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
-app.options("*", cors());
-
+// Uploads
 const uploadsDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir);
 }
-
 app.use("/uploads", express.static(uploadsDir));
 
+// Routes
 app.use("/api/auth", require("./routes/authRoute"));
 app.use("/api/courses", require("./routes/courseRoute"));
 app.use("/api/upload", require("./routes/uploadRoute"));
 
+// Health check
 app.get("/", (req, res) => {
   res.send("LMS Backend is Running");
 });
 
+// DB + Server
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected");
-    app.listen(process.env.PORT || 5000, () => {
-      console.log(`Server running on port ${process.env.PORT || 5000}`);
-    });
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () =>
+      console.log(`Server running on port ${PORT}`)
+    );
   })
   .catch((err) => {
     console.error("MongoDB Connection Error:", err);
