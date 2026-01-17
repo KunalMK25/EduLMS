@@ -14,6 +14,7 @@ const Register = () => {
         e.preventDefault();
         try {
             await register(formData.name, formData.email, formData.password, formData.role);
+            localStorage.setItem("token", res.data.token);
             navigate('/dashboard');
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed');

@@ -10,14 +10,18 @@ const Login = () => {
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            await login(email, password);
-            navigate('/dashboard');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please try again.');
-        }
-    };
+  e.preventDefault();
+  try {
+    const res = await api.post("/api/auth/login", formData);
+
+    localStorage.setItem("token", res.data.token);
+
+    navigate("/dashboard");
+  } catch (err) {
+    alert("Login failed");
+  }
+};
+
 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
