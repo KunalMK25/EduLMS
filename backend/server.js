@@ -13,11 +13,13 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: [
+      "http://localhost:5173",
+      "https://edulms1.netlify.app"
+    ],
+    credentials: true
   })
-);
+)
 
 const uploadsDir = path.join(__dirname, "uploads");
 
