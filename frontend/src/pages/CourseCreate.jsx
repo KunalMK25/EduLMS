@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import api from "../api";
+import api from "../api.js";
+
 
 const CourseCreate = () => {
   const [formData, setFormData] = useState({

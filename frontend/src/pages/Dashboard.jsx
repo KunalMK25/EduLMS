@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import api from "../api";
+import api from "../api.js";
 
 const Dashboard = () => {
   const { user } = useAuth();
